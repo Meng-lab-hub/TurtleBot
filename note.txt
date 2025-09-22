@@ -1,0 +1,24 @@
+Turtle bot emanual link: https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
+
+Installing ubuntu on VMware: https://www.youtube.com/watch?v=SgfrHKg81Qc
+
+vmware ubuntu 22.04.5 LTS login infor:
+
+username: turtlebot
+password: turtlebot
+
+
+PI login infos:
+username: ubuntu
+password: ubuntu
+
+9/19/25:
+
+- encounter problem (can't start up robot)
+	> what happened: followed the guide, skip some part that think skipable.
+		- use mobile hotspot for PI and VM
+		- sometimes PI doesn't connect ot hotspot, need to edit config network file in PI mannualy (check guide).
+		- need keyboard and monitor connect to PI to get pi address, after that we can ssh to PI by VM or other machine.
+
+	> solution: ???
+	> try: try re-flash ubuntu, reinstall ROS2, Turtlebot package again, follow step closely.
