@@ -14,6 +14,16 @@ password: ubuntu
 
 9/19/25:
 
+- finished 3.2 on emanual
+
+- accidentally installed turtlebot3 desktop instead of barebone
+
+- skipped OpenCR setup
+
+- talking - listenning doesn't work
+
+- failed when bring up, result of failed bring up can be seen in figure log 9/19/25.
+
 - encounter problem (can't start up robot)
 	> what happened: followed the guide, skip some part that think skipable.
 		- use mobile hotspot for PI and VM
