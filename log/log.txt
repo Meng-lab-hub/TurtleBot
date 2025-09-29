@@ -168,3 +168,8 @@ ImageView.callback_image() while trying to convert image from 'nv21' to 'rgb8' a
 
 
 > topic list is much smaller than the one in emanual. under comment section of quick start youtube video mentioned that it's because of firewall from pi, hasn't check it yet.
+	> issue: topic list will be available one bring up turtlebot. that is why topic list has only a few.
+	> issue 2: make sure that firewall is disable by 
+		sudo ufw status		// to check if firewall if active or inactive, if it is active run command below
+		sudo ufw disable	
+
