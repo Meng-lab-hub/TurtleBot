@@ -32,3 +32,139 @@ password: ubuntu
 
 	> solution: ???
 	> try: try re-flash ubuntu, reinstall ROS2, Turtlebot package again, follow step closely.
+
+
+9/27/25:
+
+> flash sd card, inserted into turtlebot, get turtlebot bootup
+
+> login to turtle bot, got ip address, tried to ssh but failed due to ssh-key from last time (first time flash sd card and tried to install) already exits
+	> solution: delete existing key first then try ssh again
+		ssh-keygen -R 172.20.10.3
+		ssh ubuntu@172.20.10.3
+
+> follow emanual until sudo apt upgrade, then when progress bar got to 2%, suddently the seems like pi die, no power, a computer that is connected to it also signal that the device is disconnected.
+	> suspicious about openning vmware at that time and vmware might wanna connecto to pi4 instead.
+	> unplug an replug usb cable didn't help, 
+		> solution: change to power pi by openCR instead. connect read and black cable from openCR board to pi.
+
+
+	
+> after reboot pi, run sudo apt update and sudo apt upgrade, it shows:
+
+Reading package lists... 
+Done Building dependency tree... 
+Done Reading state information... 
+Done 173 packages can be upgraded. Run 'apt list --upgradable' to see them. 
+ubuntu@turtlebot:~$ sudo apt upgrade 
+E: dpkg was interrupted, you must manually run 'sudo dpkg --configure -a' to correct the problem.
+
+	> solution: run: sudo dpkg --configure -a
+			 sudo apt update
+			 sudo apt upgrade -y
+
+
+> after a while, it will shows a gui with purple background saying something is outdated, just enter "ok" with default option that it picks for us
+	> after get back to terminal, do
+		sudo reboot
+
+	> after system is reboot and is back, do
+		sudo apt update
+		sudo apt upgrade
+		sudo apt --fix-broken install
+
+
+> proceed untill installing camera package, notice that python3-colcon-meson is mentioned under black box but is not actually given in black box as command to install
+	> for now: simply install it separately despite emanual didn't tell so
+		sudo apt install python3-colcon-meson
+
+
+> when try: meson setup build --buildtype=release -Dpipelines=rpi/vc4,rpi/pisp -Dipas=rpi/vc4,rpi/pisp -Dv4l2=true -Dgstreamer=enabled -Dtest=false -Dlc-compliance=disabled -Dcam=disabled -Dqcam=disabled -Ddocumentation=disabled -Dpycamera=enabled. error shows that meson version is too old. 
+	> solution: install/upgrade pip then install/upgrade meson
+		$ python3 -m pip install --upgrade pip
+
+		// then there will be warning regarding path of pip, use command below
+
+		$ export PATH=$HOME/.local/bin:$PATH 
+		$ echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc
+		$ source ~/.bashrc
+
+
+		upgrade meson
+
+		$ pip install --user --upgrade meson
+
+
+		then try meson setup build again.
+
+> at stage where: sudo ninja -C build install. these error occur:
+
+	ubuntu@turtlebot:~/libcamera$ sudo ninja -C build install
+[sudo] password for ubuntu:
+ninja: Entering directory `build'
+[5/6] Installing files
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/mesonbuild/mesonmain.py", line 146, in run
+    return options.run_func(options)
+  File "/usr/lib/python3/dist-packages/mesonbuild/minstall.py", line 811, in run
+    installer.do_install(datafilename)
+  File "/usr/lib/python3/dist-packages/mesonbuild/minstall.py", line 564, in do_install
+    d = self.check_installdata(pickle.load(ifile))
+ModuleNotFoundError: No module named 'mesonbuild.options'
+
+ERROR: Unhandled python exception
+
+    This is a Meson bug and should be reported!
+FAILED: meson-internal__install
+/home/ubuntu/.local/bin/meson install --no-rebuild
+ninja: build stopped: subcommand failed.
+
+
+	> chatGPT suggest that sudo cannot find new meson new version that we installed via pip, it found only the old meson version from apt.
+	> potential solution:
+		right now we did:
+			sudo apt remove meson -y
+			pip install --user --upgrade meson
+			ninja -C build install
+
+
+> lunch camera, it seems running, now tried to use vmware to see the live image
+
+> on vmware if "rqt_image_view" doesn't work "command not found" even after try "sudo apt update" and "sudo apt install ros-humble-rqt-image-view" and even after "source ~/.bashrc". we can open a camera feed by command below instead:
+	> ros2 run rqt_image_view rqt_image_view
+
+
+> after open a camera feed, on top left choose a topic then get error like: 
+
+turtlebot@turtlebot-virtual-machine:~$ ros2 run rqt_image_view rqt_image_view
+ImageView.callback_image() while trying to convert image from 'nv21' to 'rgb8' an exception was thrown (Unrecognized image encoding [nv21])
+
+	> it might mean that camera node is up and streamming live image but in nv21 format and the camera window cannot convert it.
+	> solution: instead of running 
+		ros2 launch turtlebot3_bringup camera.launch.py
+
+		run command below instead to lunch camera node 
+
+		ros2 launch turtlebot3_bringup camera.launch.py format:=RGB888
+
+
+> now we see some image from camera but it's very slow, emanual suggest use compress topic but when its not working.
+	> issue 1: camera stream video at 640x480. reduce it to 320x240
+	> solution: when bring up node, run this instead:
+		ros2 launch turtlebot3_bringup camera.launch.py format:=RGB888 width:=320 height:=240
+
+	> issue 2: seems like compress package is not installed
+        > solution: install package
+                sudo apt install ros-humble-compressed-image-transport
+		- run camera viewer -> choose compress optic -> wait for 10-20s.
+		- if still doesn't work try bring up using command below then do the same "run camera viewer -> choose compress optic -> wait for 10-20s"
+			ros2 launch turtlebot3_bringup camera.launch.py format:=RGB888 width:=320 height:=240 image_transport:=compressed
+
+
+> reached to OpenCR Setup, cannot find waffle_pi.opencr file, asking bennett if he can find the file or should we just go with waffle.opencr.
+	> solution: bennett response to this via email saying that for OpenCR we use waffle, but for everything else, ROS/Turtlebot, we use waffle_pi.
+
+> openCR setup is done. push button 1 test and push button 2 test succeeded.
+
+
+> topic list is much smaller than the one in emanual. under comment section of quick start youtube video mentioned that it's because of firewall from pi, hasn't check it yet.
