@@ -173,3 +173,24 @@ ImageView.callback_image() while trying to convert image from 'nv21' to 'rgb8' a
 		sudo ufw status		// to check if firewall if active or inactive, if it is active run command below
 		sudo ufw disable	
 
+
+
+10/17/25
+
+
+> follow autonomous driving step
+
+
+> when trying to lanch gazebo simulation, got "turtlebot3_gazebo not found".
+	> issue: seems like the github repo that we cloned earlier doesn't have all package or the package is not installed properly.
+	> solution: use command below to install turtlebot3_gazebo
+		sudo apt-get install ros-humble-turtlebot3-gazebo
+
+
+	> issue 2: if exception "TURTLEBOT MODEL" is thrown, it means we haven't specify turtlebot model or we have it in ~/.bashrc but didn't source
+	> solution: make sure we specify turtlebot model in ~/.bashrc then apply with command below
+		source ~/.bashrc
+
+
+> note 1: when run camera calibration with calibration=true, it will publish its respective topic on rqt
+> note 2: sign detection works. it works slower on construction, parking.
