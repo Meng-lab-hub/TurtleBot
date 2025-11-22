@@ -194,3 +194,36 @@ ImageView.callback_image() while trying to convert image from 'nv21' to 'rgb8' a
 
 > note 1: when run camera calibration with calibration=true, it will publish its respective topic on rqt
 > note 2: sign detection works. it works slower on construction, parking.
+
+
+
+11/21/2025
+
+> working on slam
+
+> follow emanual
+	1. bring up robot
+	2. bring up camera
+	3. rqt to camera
+	4. run cartographer > rviz2 will pop up
+	5. initially robot model is missing.
+		- solution: on bottom of left panel (display) click Add > RobotModel. on sub tree there is topic, click on empty space next to it and select robot_description.
+
+	6. bring up keyboard controller.
+	7. move around and see map is created.
+
+> navigation
+
+> follow emanual should be fine. nothing special
+
+> manipulation
+
+> installed all package following emanual
+	> on the last colcon build got:
+		Summary: 28 packages finished [1min 0s]
+  1 package had stderr output: turtlebot3_gazebo
+
+
+> on SBC, bring up manipulation launch failed. check screenshot on ~/Desktop/Turtlebot3/log/images
+
+> on Remote PC, bring up gazebo simulator failed. check screen shot on ~/Desktop/Turtlebot3/log/images
